@@ -1,0 +1,100 @@
+services:
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb
+    restart: unless-stopped
+
+    environment:
+      # DB name and user created by init.sh
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+
+      # Root password (will be overridden by secret if present)
+      DB_ROOT_PWD: change_root_password
+
+      # Optional: default values if secrets are missing
+      DB_USER_PWD: change_user_password
+      WP_ADMIN_USER: admin
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+    # Allow init.sh to read secrets if you want
+    secrets:
+      - db_root_password
+      - db_password
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    container_name: wordpress
+    restart: unless-stopped
+
+    depends_on:
+      - mariadb
+
+    environment:
+      # DB info used by configure.sh (wp config create)
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+
+      # WordPress site config
+      WP_URL: http://localhost:8080       # goes through nginx
+      WP_TITLE: "My Inception Site"
+      WP_ADMIN_USER: admin
+      WP_ADMIN_EMAIL: admin@example.com
+      WP_USER: user
+      WP_USER_EMAIL: user@example.com
+
+    # Passwords come from Docker secrets, not env
+    secrets:
+      - db_password
+      - admin_password
+      - user_password
+
+    # Share code with nginx
+    volumes:
+      - wordpress_data:/var/www/html
+
+    # PHP-FPM listens on 9000 inside the network for nginx
+    expose:
+      - "9000"
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+
+    depends_on:
+      - wordpress
+
+    environment:
+      DOMAIN_NAME: localhost
+
+    ports:
+      - "8080:80"
+      - "8443:443"
+
+    volumes:
+      - wordpress_data:/var/www/html:ro
+volumes:
+  mariadb_data:
+  wordpress_data:
+
+secrets:
+  db_root_password:
+    file: ./secrets/db_root_password
+  db_password:
+    file: ./secrets/db_password
+  admin_password:
+    file: ./secrets/admin_password
+  user_password:
+    file: ./secrets/user_password
