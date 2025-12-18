@@ -12,5 +12,5 @@ COPY tools/ssl_setup.sh /usr/local/bin/ssl_setup.sh
 RUN chmod +x /usr/local/bin/ssl_setup.sh
 
 EXPOSE 80 443
-
+ 
 CMD ["/usr/local/bin/ssl_setup.sh"]
