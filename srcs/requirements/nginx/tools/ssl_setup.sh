@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-DOMAIN_NAME="${DOMAIN_NAME:-localhost}"
+DOMAIN_NAME="${DOMAIN_NAME:-sleeper.42.fr}"
 
 # Create SSL directory if needed
 mkdir -p /etc/nginx/ssl

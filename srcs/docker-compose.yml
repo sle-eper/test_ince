@@ -44,13 +44,13 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
 
-      # WordPress site config
-      WP_URL: http://localhost:8080       # goes through nginx
+      # WordPress site config - CHANGED TO sleeper.42.fr
+      WP_URL: https://sleeper.42.fr
       WP_TITLE: "My Inception Site"
       WP_ADMIN_USER: admin
-      WP_ADMIN_EMAIL: admin@example.com
+      WP_ADMIN_EMAIL: admin@sleeper.42.fr
       WP_USER: user
-      WP_USER_EMAIL: user@example.com
+      WP_USER_EMAIL: user@sleeper.42.fr
 
     # Passwords come from Docker secrets, not env
     secrets:
@@ -77,11 +77,11 @@ services:
       - wordpress
 
     environment:
-      DOMAIN_NAME: localhost
+      DOMAIN_NAME: sleeper.42.fr
 
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "443:443"
+      - "80:80"
 
     volumes:
       - wordpress_data:/var/www/html:ro
