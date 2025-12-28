@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: mariadb
     restart: unless-stopped
+    networks:
+      - inception
 
     environment:
       # DB name and user created by init.sh
@@ -16,15 +18,15 @@ services:
 
       # Optional: default values if secrets are missing
       DB_USER_PWD: change_user_password
-      WP_ADMIN_USER: admin
+      WP_ADMIN_USER: wpowner
 
-    ports:
-      - "3306:3306"
+    # REMOVED: External port exposure - MariaDB should only be accessible internally
+    expose:
+      - "3306"
 
     volumes:
       - mariadb_data:/var/lib/mysql
 
-    # Allow init.sh to read secrets if you want
     secrets:
       - db_root_password
       - db_password
@@ -35,6 +37,8 @@ services:
       dockerfile: Dockerfile
     container_name: wordpress
     restart: unless-stopped
+    networks:
+      - inception
 
     depends_on:
       - mariadb
@@ -44,19 +48,17 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
 
-      # WordPress site config - CHANGED TO sleeper.42.fr
+      # WordPress site config
       WP_URL: https://sleeper.42.fr
       WP_TITLE: "My Inception Site"
-      WP_ADMIN_USER: admin
-      WP_ADMIN_EMAIL: admin@sleeper.42.fr
-      WP_USER: user
-      WP_USER_EMAIL: user@sleeper.42.fr
+      WP_ADMIN_USER: wpowner
+      WP_ADMIN_EMAIL: wpowner@sleeper.42.fr
+      WP_USER: author
+      WP_USER_EMAIL: author@sleeper.42.fr
 
-    # Passwords come from Docker secrets, not env
     secrets:
       - db_password
       - admin_password
-      - user_password
 
     # Share code with nginx
     volumes:
@@ -72,6 +74,8 @@ services:
       dockerfile: Dockerfile
     container_name: nginx
     restart: unless-stopped
+    networks:
+      - inception
 
     depends_on:
       - wordpress
@@ -79,22 +83,41 @@ services:
     environment:
       DOMAIN_NAME: sleeper.42.fr
 
+    # ONLY port 443 - NGINX is the sole entry point
     ports:
       - "443:443"
-      - "80:80"
 
     volumes:
       - wordpress_data:/var/www/html:ro
+
+# Named volumes - stores data in Docker's volume directory
 volumes:
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/sleeper/data/mariadb
+  
   wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/sleeper/data/wordpress
 
+# Docker secrets for sensitive data
 secrets:
   db_root_password:
-    file: ./secrets/db_root_password
+    file: ../secrets/db_root_password.txt
   db_password:
-    file: ./secrets/db_password
+    file: ../secrets/db_password.txt
   admin_password:
-    file: ./secrets/admin_password
+    file: ../secrets/credentials.txt
   user_password:
-    file: ./secrets/user_password
+    file: ../secrets/user_password.txt
+
+# Custom network - REQUIRED by subject
+networks:
+  inception:
+    driver: bridge
