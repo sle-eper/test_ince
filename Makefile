@@ -1,22 +1,30 @@
-all : build up
+NAME = inception
+COMPOSE = docker compose -f srcs/docker-compose.yml
+DATA_DIR = /home/sleeper/data
 
-build :
-	docker compose -f srcs/docker-compose.yml build --parallel
-	
-up : 
-	docker compose -f srcs/docker-compose.yml up -d
+all: init build up
 
-viewUp : 
-	docker compose -f srcs/docker-compose.yml up
+init:
+	mkdir -p $(DATA_DIR)/mariadb
+	mkdir -p $(DATA_DIR)/wordpress
 
-restart :
-	docker compose -f srcs/docker-compose.yml restart
+build:
+	$(COMPOSE) build --parallel
 
-down :
-	docker compose -f srcs/docker-compose.yml down
+up:
+	$(COMPOSE) up -d
 
-cleanV :
+viewUp:
+	$(COMPOSE) up
+
+restart:
+	$(COMPOSE) restart
+
+down:
+	$(COMPOSE) down
+
+downV:
+	$(COMPOSE) down -v
+
+cleanV:
 	docker volume rm $$(docker volume ls -q)
-
-downV :
-	docker compose -f srcs/docker-compose.yml down -v
