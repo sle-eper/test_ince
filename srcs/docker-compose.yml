@@ -59,6 +59,7 @@ services:
     secrets:
       - db_password
       - admin_password
+      - user_password
 
     # Share code with nginx
     volumes:
