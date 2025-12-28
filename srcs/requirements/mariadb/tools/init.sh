@@ -18,8 +18,8 @@ else
 	DB_USER_PWD="${DB_USER_PWD:-}"
 fi
 
-if [ -f /run/secrets/credentials ]; then
-	WP_ADMIN_PWD="$(cat /run/secrets/credentials)"
+if [ -f /run/secrets/admin_password ]; then
+	WP_ADMIN_PWD="$(cat /run/secrets/admin_password)"
 else
 	WP_ADMIN_PWD="${WP_ADMIN_PWD:-}"
 fi

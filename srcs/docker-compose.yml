@@ -113,7 +113,7 @@ secrets:
   db_password:
     file: ../secrets/db_password.txt
   admin_password:
-    file: ../secrets/credentials.txt
+    file: ../secrets/admin_password.txt
   user_password:
     file: ../secrets/user_password.txt
 

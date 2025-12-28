@@ -9,7 +9,15 @@ if [ -f /run/secrets/admin_password ]; then
     WP_ADMIN_PASSWORD="$(cat /run/secrets/admin_password)"
 fi
 
-WP_USER_PASSWORD="${WP_USER_PASSWORD:-defaultuserpass123}"
+if [ -f /run/secrets/admin_password ]; then
+    WP_ADMIN_PASSWORD="$(cat /run/secrets/admin_password)"
+fi
+
+if [ -f /run/secrets/user_password ]; then
+    WP_USER_PASSWORD="$(cat /run/secrets/user_password)"
+else
+    WP_USER_PASSWORD="${WP_USER_PASSWORD:-defaultuserpass123}"
+fi
 
 echo "Waiting for MariaDB..."
 while ! nc -z mariadb 3306; do

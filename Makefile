@@ -2,6 +2,7 @@ all : build up
 
 build :
 	docker compose -f srcs/docker-compose.yml build --parallel
+	
 up : 
 	docker compose -f srcs/docker-compose.yml up -d
 
