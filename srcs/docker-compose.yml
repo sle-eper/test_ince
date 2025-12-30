@@ -50,12 +50,12 @@ services:
       MYSQL_USER: wordpress
 
       # WordPress site config
-      WP_URL: https://sleeper.42.fr
+      WP_URL: https://mmanaoui.42.fr
       WP_TITLE: "My Inception Site"
       WP_ADMIN_USER: wpowner
-      WP_ADMIN_EMAIL: wpowner@sleeper.42.fr
+      WP_ADMIN_EMAIL: wpowner@mmanaoui.42.fr
       WP_USER: author
-      WP_USER_EMAIL: author@sleeper.42.fr
+      WP_USER_EMAIL: author@mmanaoui.42.fr
 
     secrets:
       - db_password
@@ -83,7 +83,7 @@ services:
       - wordpress
 
     environment:
-      DOMAIN_NAME: sleeper.42.fr
+      DOMAIN_NAME: mmanaoui.42.fr
 
     # ONLY port 443 - NGINX is the sole entry point
     ports:
@@ -99,14 +99,14 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/sleeper/data/mariadb
+      device: /home/mmanaoui/data/mariadb
   
   wordpress_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/sleeper/data/wordpress
+      device: /home/mmanaoui/data/wordpress
 
 # Docker secrets for sensitive data
 secrets:

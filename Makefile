@@ -1,6 +1,6 @@
 NAME = inception
 COMPOSE = docker compose -f srcs/docker-compose.yml
-DATA_DIR = /home/sleeper/data
+DATA_DIR = /home/mmanaoui/data
 
 all: init build up
 
