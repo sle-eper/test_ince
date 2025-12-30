@@ -44,7 +44,6 @@ RUN sed -i 's|^listen = .*|listen = 0.0.0.0:9000|' /etc/php81/php-fpm.d/www.conf
     && sed -i 's|^user = .*|user = wordpress|' /etc/php81/php-fpm.d/www.conf \
     && sed -i 's|^group = .*|group = wordpress|' /etc/php81/php-fpm.d/www.conf
 
-# Entry script
 COPY tools/configure.sh /usr/local/bin/configure.sh
 RUN chmod +x /usr/local/bin/configure.sh
 

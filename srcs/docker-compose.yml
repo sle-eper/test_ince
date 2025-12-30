@@ -9,18 +9,14 @@ services:
       - inception
 
     environment:
-      # DB name and user created by init.sh
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
 
-      # Root password (will be overridden by secret if present)
       DB_ROOT_PWD: change_root_password
 
-      # Optional: default values if secrets are missing
       DB_USER_PWD: change_user_password
       WP_ADMIN_USER: wpowner
 
-    # REMOVED: External port exposure - MariaDB should only be accessible internally
     expose:
       - "3306"
 
@@ -45,11 +41,9 @@ services:
       - mariadb
 
     environment:
-      # DB info used by configure.sh (wp config create)
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
 
-      # WordPress site config
       WP_URL: https://mmanaoui.42.fr
       WP_TITLE: "My Inception Site"
       WP_ADMIN_USER: wpowner
@@ -62,11 +56,9 @@ services:
       - admin_password
       - user_password
 
-    # Share code with nginx
     volumes:
       - wordpress_data:/var/www/html
 
-    # PHP-FPM listens on 9000 inside the network for nginx
     expose:
       - "9000"
 
@@ -85,14 +77,12 @@ services:
     environment:
       DOMAIN_NAME: mmanaoui.42.fr
 
-    # ONLY port 443 - NGINX is the sole entry point
     ports:
       - "443:443"
 
     volumes:
       - wordpress_data:/var/www/html:ro
 
-# Named volumes - stores data in Docker's volume directory
 volumes:
   mariadb_data:
     driver: local
@@ -108,7 +98,6 @@ volumes:
       o: bind
       device: /home/mmanaoui/data/wordpress
 
-# Docker secrets for sensitive data
 secrets:
   db_root_password:
     file: ../secrets/db_root_password.txt
@@ -119,7 +108,6 @@ secrets:
   user_password:
     file: ../secrets/user_password.txt
 
-# Custom network - REQUIRED by subject
 networks:
   inception:
     driver: bridge
